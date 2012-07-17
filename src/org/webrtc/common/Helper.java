@@ -20,7 +20,7 @@ public class Helper {
 	public static String generate_random(int len) {
 		String generated = "";
 		for(int i=0; i<len; i++) {
-			int index = (int) Math.round(Math.random()*10);
+			int index = ((int) Math.round(Math.random()*10))%10;
 			generated += "0123456789".charAt(index);
 		}		
 		return generated;

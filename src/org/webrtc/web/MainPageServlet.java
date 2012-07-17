@@ -23,13 +23,20 @@ public class MainPageServlet extends HttpServlet {
 	
 	/** Renders the main page. When this page is shown, we create a new channel to push asynchronous updates to the client.*/
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		Map<String, String> params = Helper.get_query_map(req.getQueryString());
+		String query = req.getQueryString();
+		if(query==null) {
+			String redirect = "/main?r=" + Helper.generate_random(8);
+			logger.info("Redirecting visitor to base URL to " + redirect);
+			resp.sendRedirect(redirect);
+			return;
+		}
+		Map<String, String> params = Helper.get_query_map(query);
 		String room_key    = Helper.sanitize(params.get("r"));
 		String debug       = params.get("debug");
 	    String stun_server = params.get("ss");
 	    if(room_key==null || room_key.equals("")) {
 	    	room_key = Helper.generate_random(8);
-	        String redirect = "/?r=" + room_key;
+	        String redirect = "/main?r=" + room_key;
 	        if(debug!=null)
 	        	redirect += ("&debug=" + debug);
 	        if(stun_server!=null || !stun_server.equals(""))
@@ -87,6 +94,5 @@ public class MainPageServlet extends HttpServlet {
 	        logger.info("Room " + room_key + " has state " + room);
 	    }	    
 	}
-	
-	
+		
 }
