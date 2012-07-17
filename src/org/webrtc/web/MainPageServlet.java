@@ -25,7 +25,7 @@ public class MainPageServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String query = req.getQueryString();
 		if(query==null) {
-			String redirect = "/main?r=" + Helper.generate_random(8);
+			String redirect = "/?r=" + Helper.generate_random(8);
 			logger.info("Redirecting visitor to base URL to " + redirect);
 			resp.sendRedirect(redirect);
 			return;
@@ -36,7 +36,7 @@ public class MainPageServlet extends HttpServlet {
 	    String stun_server = params.get("ss");
 	    if(room_key==null || room_key.equals("")) {
 	    	room_key = Helper.generate_random(8);
-	        String redirect = "/main?r=" + room_key;
+	        String redirect = "/?r=" + room_key;
 	        if(debug!=null)
 	        	redirect += ("&debug=" + debug);
 	        if(stun_server!=null || !stun_server.equals(""))
