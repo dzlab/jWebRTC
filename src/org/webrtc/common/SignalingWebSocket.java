@@ -1,19 +1,22 @@
 package org.webrtc.common;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Logger;
 
 import org.eclipse.jetty.websocket.WebSocket;
+import org.webrtc.model.Room;
 
 
 public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
+	private static final Logger logger = Logger.getLogger(SignalingWebSocket.class.getName()); 
 	private static final ConcurrentMap<String, SignalingWebSocket> channels = new ConcurrentHashMap<String, SignalingWebSocket>();
 	private Connection connection;
 	private String token;
 	
 	public static boolean send(String token, String message) {
+		logger.info("Signalisation: sending out message ("+message+") for "+token);
 		boolean success = false;
 		SignalingWebSocket ws = channels.get(token);
 		if(ws!=null) 
@@ -22,6 +25,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 	}
 
 	public void onOpen(Connection connection) {
+		logger.info("Signalisation: connection opened.");
 		// Client (Browser) WebSockets has opened a connection.
 		// 1) Store the opened connection
 		this.connection = connection;
@@ -29,15 +33,16 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 		//webSockets.add(this);
 	}
 
-	/**	Loop for each instance of SignalingWebSocket to send message server to each client WebSockets. */
+	/**	check if message is token declaration and then store mapping between the token and this ws. */
 	public void onMessage(String data) {
-		try {
-/*			
-			for (SignalingWebSocket webSocket : webSockets) {
-				// send a message to the current client WebSocket.
-				webSocket.connection.sendMessage(data);
+		
+		try {			
+			if(data.startsWith("token")) {
+				int index = data.indexOf(":");
+				String token = data.substring(index+1);
+				channels.put(token, this);
+				logger.info("Adding token: "+token);
 			}
-*/			
 		} catch (Exception x) {
 			// Error was detected, close the ChatWebSocket client side
 			this.connection.disconnect();
@@ -47,12 +52,16 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
 	/** Remove ChatWebSocket in the global list of SignalingWebSocket instance. */
 	public void onClose(int closeCode, String message) {
-		if(token!=null)
+		logger.info("Signalisation: connection closed.");
+		if(token!=null) {
+			Room.disconnect(token);
 			channels.remove(token);
+		}
 	}
 	
 	/** Send a message out */
 	public boolean send(String message) {
+		logger.info("Signalisation: sending message ... " + message);
 		boolean success = false;
 		if(connection!=null) {
 			try {

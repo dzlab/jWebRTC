@@ -4,14 +4,6 @@
 <head>
 <link rel="canonical" href="{room_link}"/>
 <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
-<script src="/_ah/channel/jsapi"></script>
-<!-- type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
--->
 <style type="text/css">
   a:link { color: #ffffff; }
   a:visited {color: #ffffff; }
@@ -132,8 +124,8 @@
 
   function openChannel() {
     console.log("Opening channel.");
-	var location = "ws://localhost:8081/"
-    var channel = new WebSocket(location);
+	var location = "ws:{server_name}:8081/";
+    channel = new WebSocket(location);
 	channel.onopen    = onChannelOpened;
 	channel.onmessage = onChannelMessage;
 	channel.onclose   = onChannelClosed;
@@ -246,8 +238,8 @@
   }
 
   function onChannelOpened() {
-    console.log('Channel opened for token:'+{token});
-	channel.send('token' +  ':' + {token});
+    console.log('Channel opened for token:{token}');
+	channel.send('token:{token}');
     channelReady = true;
     if (initiator) maybeStart();
   }
@@ -256,10 +248,11 @@
     processSignalingMessage(message.data);
   }
   function onChannelError() {
-    console.log('Channel error for token:'+{token});
+    console.log('Channel error for token: {token}');
   }
   function onChannelClosed() {
-    console.log('Channel closed for token:'+{token});
+    console.log('Channel closed for token: {token}');
+	channel = null;
   }
 
   function onUserMediaSuccess(stream) {
@@ -358,6 +351,10 @@
 
   if (!window.WebSocket)
 	alert("WebSocket not supported by this browser");
+  window.onbeforeunload = function() {
+    channel.onclose = function () {}; // disable onclose handler first
+    channel.close()
+  };
   setTimeout(initialize, 1);
 </script>
 <div id="container" ondblclick="enterFullScreen()"> 

@@ -24,7 +24,7 @@ public class MainPageServlet extends HttpServlet {
 	public static final String PATH = "/WebSocketServer";
 	
 	/** Renders the main page. When this page is shown, we create a new channel to push asynchronous updates to the client.*/
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {		
 		String query = req.getQueryString();
 		if(query==null) {
 			String redirect = PATH + "/?r=" + Helper.generate_random(8);
@@ -76,7 +76,9 @@ public class MainPageServlet extends HttpServlet {
 	        	return;
 	        }
 
-	        String room_link = "http://localhost:8080/?r=" + room_key;
+	        String server_name = req.getServerName();
+	        int  server_port   = req.getServerPort(); 
+	        String room_link = "http://"+server_name+":"+server_port+"/?r=" + room_key;
 	        if(debug!=null)
 	        	room_link += ("&debug=" + debug);
 	        if(stun_server!=null)
@@ -86,6 +88,7 @@ public class MainPageServlet extends HttpServlet {
 	        String token = Helper.make_token(room_key, user);
 	        String pc_config = Helper.make_pc_config(stun_server);
 	        Map<String, String> template_values = new HashMap<String, String>(); 
+	        template_values.put("server_name", server_name);
 	        template_values.put("token", token);
 	        template_values.put("me", user);
 	        template_values.put("room_key", room_key);
