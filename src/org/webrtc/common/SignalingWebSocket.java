@@ -47,7 +47,8 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
 	/** Remove ChatWebSocket in the global list of SignalingWebSocket instance. */
 	public void onClose(int closeCode, String message) {
-		channels.remove(token);
+		if(token!=null)
+			channels.remove(token);
 	}
 	
 	/** Send a message out */

@@ -71,7 +71,9 @@ public class Helper {
 		return output;
 	}
 	
-	public static String generatePage(File file, String block, Map<String, String> values) {
+	/** Generate an HTML file by using JTPL template engine to replace variables with their values provided in the map. */
+	public static String generatePage(File file, Map<String, String> values) {
+		String block = "main"; 
 		String output = null;
 		try {
 			Template tpl = new Template(file);

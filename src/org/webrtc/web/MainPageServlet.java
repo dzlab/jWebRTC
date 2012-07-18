@@ -19,13 +19,15 @@ import org.webrtc.model.Room;
 public class MainPageServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MainPageServlet.class.getName()); 
+	private static final Logger logger = Logger.getLogger(MainPageServlet.class.getName());
+	
+	public static final String PATH = "/WebSocketServer";
 	
 	/** Renders the main page. When this page is shown, we create a new channel to push asynchronous updates to the client.*/
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String query = req.getQueryString();
 		if(query==null) {
-			String redirect = "/?r=" + Helper.generate_random(8);
+			String redirect = PATH + "/?r=" + Helper.generate_random(8);
 			logger.info("Redirecting visitor to base URL to " + redirect);
 			resp.sendRedirect(redirect);
 			return;
@@ -36,7 +38,7 @@ public class MainPageServlet extends HttpServlet {
 	    String stun_server = params.get("ss");
 	    if(room_key==null || room_key.equals("")) {
 	    	room_key = Helper.generate_random(8);
-	        String redirect = "/?r=" + room_key;
+	        String redirect = PATH + "/?r=" + room_key;
 	        if(debug!=null)
 	        	redirect += ("&debug=" + debug);
 	        if(stun_server!=null || !stun_server.equals(""))
@@ -48,26 +50,29 @@ public class MainPageServlet extends HttpServlet {
 	    	String user = null;
 	        int initiator = 0;
 	        Room room = Room.get_by_key_name(room_key);
-	        if(room==null && debug != "full") { // New room.
+	        if(room==null && (debug==null||!"full".equals(debug))) { 
+	        	logger.info("New room " + room_key);
 	        	user = Helper.generate_random(8);
 	        	room = new Room(room_key);
 	        	room.add_user(user);
-	        	if(!debug.equals("loopback"))
+	        	if(!"loopback".equals(debug))
 	        		initiator = 0;	          
 	        	else {
 	        		room.add_user(user);
 	        		initiator = 1;	        		
 	        	}
-	        } else if(room!=null && room.get_occupancy() == 1 && !debug.equals("full")) {// 1 occupant.
+	        } else if(room!=null && room.get_occupancy() == 1 && !"full".equals(debug)) {
+	        	logger.info("Room " + room_key + " with 1 occupant.");
 	        	user = Helper.generate_random(8);
 	        	room.add_user(user);
 	        	initiator = 1;
-	        } else { // 2 occupants (full).
+	        } else { 
+	        	logger.info("Room " + room_key + " with 2 occupants (full).");
 	        	Map<String, String> template_values = new HashMap<String, String>(); 
 		        template_values.put("room_key", room_key);
-	        	File file = new File("full.jtpl");
-		        resp.getWriter().print(Helper.generatePage(file, "main", template_values));
-	        	logger.info("Room " + room_key + " is full");
+		        String filepath = getServletContext().getRealPath( "/full.jtpl" );
+	        	File file = new File(filepath);
+		        resp.getWriter().print(Helper.generatePage(file, template_values));
 	        	return;
 	        }
 
@@ -87,9 +92,8 @@ public class MainPageServlet extends HttpServlet {
 	        template_values.put("room_link", room_link);
 	        template_values.put("initiator", ""+initiator);
 	        template_values.put("pc_config", pc_config);
-	        	        
-	        File file = new File("index.jtpl");
-	        resp.getWriter().print(Helper.generatePage(file, "main", template_values));
+	        File file = new File(getServletContext().getRealPath( "/index.jtpl" ));
+	        resp.getWriter().print(Helper.generatePage(file, template_values));
 	        logger.info("User " + user + " added to room " + room_key);
 	        logger.info("Room " + room_key + " has state " + room);
 	    }	    

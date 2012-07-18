@@ -1,12 +1,13 @@
 package org.webrtc.model;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 public class Room {
 	
 	private static final Logger log = Logger.getLogger(Room.class.getName()); 
-	private static final HashMap<String, Room> DB = new HashMap<String, Room>();
+	private static final ConcurrentMap<String, Room> DB = new ConcurrentHashMap<String, Room>();
 	
 	/** Retrieve a {@link Room} instance from database */
 	public static Room get_by_key_name(String room_key) {
@@ -86,21 +87,28 @@ public class Room {
 	    		user2 = null;
 	    	} else
 	    		user1 = null;
-	    }
-/*    
-	    if self.get_occupancy() > 0:
-	      self.put()
-	    else:
-	      self.delete();
-*/	      
+	    }  
+	    if(get_occupancy() > 0)
+	      put();
+	    else
+	      delete();
+	      
 	}
 	
+	/**@return the key of this room. */
 	public String key() {
 		return key_name;
 	}
 	
 	/** Store current instance into database */
 	public void put() {
+		log.info("Saving current room instance (key: "+key_name+") to database.");
 		DB.put(key_name, this);
+	}
+	/** Delete/Remove current instance from database */
+	public void delete() {
+		log.info("Deleting current room instance (key: "+key_name+") from database.");
+		if(key_name!=null)
+			DB.remove(key_name);
 	}
 }
