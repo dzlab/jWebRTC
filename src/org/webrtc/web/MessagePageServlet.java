@@ -24,7 +24,7 @@ public class MessagePageServlet extends HttpServlet {
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {		
 		String message = Helper.get_string_from_stream(req.getInputStream());
-
+		logger.info("Delivering received message: " + message);
 		Map<String, String> params = Helper.get_query_map(req.getQueryString());
 		String room_key = params.get("r");
 		Room room = Room.get_by_key_name(room_key);

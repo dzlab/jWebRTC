@@ -34,8 +34,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 	}
 
 	/**	check if message is token declaration and then store mapping between the token and this ws. */
-	public void onMessage(String data) {
-		
+	public void onMessage(String data) {		
 		try {			
 			if(data.startsWith("token")) {
 				int index = data.indexOf(":");
@@ -52,7 +51,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
 	/** Remove ChatWebSocket in the global list of SignalingWebSocket instance. */
 	public void onClose(int closeCode, String message) {
-		logger.info("Signalisation: connection closed.");
+		logger.info("Connection closed.");
 		if(token!=null) {
 			Room.disconnect(token);
 			channels.remove(token);
@@ -61,7 +60,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 	
 	/** Send a message out */
 	public boolean send(String message) {
-		logger.info("Signalisation: sending message ... " + message);
+		logger.info("Sending message ... " + message);
 		boolean success = false;
 		if(connection!=null) {
 			try {

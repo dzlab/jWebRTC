@@ -83,8 +83,7 @@ public class MainPageServlet extends HttpServlet {
 	        	room_link += ("&debug=" + debug);
 	        if(stun_server!=null)
 	        	room_link += ("&ss=" + stun_server);
-
-	        	        
+	        
 	        String token = Helper.make_token(room_key, user);
 	        String pc_config = Helper.make_pc_config(stun_server);
 	        Map<String, String> template_values = new HashMap<String, String>(); 

@@ -211,7 +211,7 @@
   function sendMessage(message) {
     var msgString = JSON.stringify(message);
     console.log('C->S: ' + msgString);
-    path = '/message?r={room_key}' + '&u={me}';
+    path = '/WebSocketServer/message?r={room_key}' + '&u={me}';
     var xhr = new XMLHttpRequest();
     xhr.open('POST', path, true);
     xhr.send(msgString);
