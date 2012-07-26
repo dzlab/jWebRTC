@@ -25,34 +25,37 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 	}
 
 	public void onOpen(Connection connection) {
-		logger.info("Signalisation: connection opened.");
-		// Client (Browser) WebSockets has opened a connection.
-		// 1) Store the opened connection
+		logger.info("A new connection opened.");
+		// Client (Browser) WebSockets has opened a connection: Store the opened connection
 		this.connection = connection;
-		// 2) Add ChatWebSocket in the global list of SignalingWebSocket instances instance.
-		//webSockets.add(this);
 	}
 
 	/**	check if message is token declaration and then store mapping between the token and this ws. */
 	public void onMessage(String data) {		
 		try {			
-			if(data.startsWith("token")) {
+			if(data.startsWith("token")) { // peer declaration
 				int index = data.indexOf(":");
 				String token = data.substring(index+1);
 				channels.put(token, this);
-				logger.info("Adding token: "+token);
+				logger.info("Adding token (valid="+Helper.is_valid_token(token)+"): "+token);
+			}else { // signaling messages exchange --> route it to the other peer
+				String room_key = Helper.get_room_key(token);
+				Room room = Room.get_by_key_name(room_key);
+				String user = Helper.get_user(token);
+				String other_user = room.get_other_user(user);
+				String other_token = Helper.make_token(room, other_user);
+				send(other_token, data);
 			}
 		} catch (Exception x) {
-			// Error was detected, close the ChatWebSocket client side
+			// Error was detected, close the WebSocket client side
 			this.connection.disconnect();
 		}
-
 	}
 
 	/** Remove ChatWebSocket in the global list of SignalingWebSocket instance. */
 	public void onClose(int closeCode, String message) {
 		logger.info("Connection closed.");
-		if(token!=null) {
+		if(token!=null) { 
 			Room.disconnect(token);
 			channels.remove(token);
 		}

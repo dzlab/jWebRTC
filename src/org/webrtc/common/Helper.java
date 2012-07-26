@@ -30,11 +30,46 @@ public class Helper {
 		return key.replace("[^a-zA-Z0-9\\-]", "-");
 	}
 	
+	/**@return a token for a given room instance and a participant */
 	public static String make_token(Room room, String user) {		 
 		return room.key() + "/" + user;
 	}
+	
+	/**@return a token for a given room key and a participant */
 	public static String make_token(String room_key, String user) {		 
 		return room_key + "/" + user;
+	}
+	
+	/**Check if the token in parameter corresponds to an existent room that has a participant identified in the token 
+	 * @return true if token is valid, false otherwise. */
+	public static boolean is_valid_token(String token) {
+		boolean valid = false;
+		Room room = Room.get_by_key_name(get_room_key(token));
+		String user = get_user(token);
+		if(room!=null && room.has_user(user))
+			valid = true;
+		return valid;
+	}
+	
+	/** @return room key from the token parameter */
+	public static String get_room_key(String token) {
+		String room_key = null;
+		if(token!=null) {
+			String[] values = token.split("/");
+			if(values!=null && values.length>0)
+				room_key = values[0];
+		}
+		return room_key;
+	}
+	/** @return user from the token parameter */
+	public static String get_user(String token) {
+		String user = null;
+		if(token!=null) {
+			String[] values = token.split("/");
+			if(values!=null && values.length>1)
+				user = values[1];
+		}
+		return user;
 	}
 	
 	public static String make_pc_config(String stun_server) {		

@@ -75,7 +75,7 @@ public class Room {
 	    return occupancy;
 	}
 	
-	/** @return the name of the other participant */
+	/** @return the name of the other participant, null if none */
 	public String get_other_user(String user) {		
 	    if(user.equals(user1))	      
 	    	return user2;
