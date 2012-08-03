@@ -12,6 +12,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
 	private static final Logger logger = Logger.getLogger(SignalingWebSocket.class.getName()); 
 	private static final ConcurrentMap<String, SignalingWebSocket> channels = new ConcurrentHashMap<String, SignalingWebSocket>();
+	
 	private Connection connection;
 	private String token;
 	
@@ -35,7 +36,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 		try {			
 			if(data.startsWith("token")) { // peer declaration
 				int index = data.indexOf(":");
-				String token = data.substring(index+1);
+				token = data.substring(index+1);
 				channels.put(token, this);
 				logger.info("Adding token (valid="+Helper.is_valid_token(token)+"): "+token);
 			}else { // signaling messages exchange --> route it to the other peer
@@ -54,7 +55,7 @@ public class SignalingWebSocket implements WebSocket.OnTextMessage {
 
 	/** Remove ChatWebSocket in the global list of SignalingWebSocket instance. */
 	public void onClose(int closeCode, String message) {
-		logger.info("Connection closed.");
+		logger.info("Connection (token:"+token+") closed with code "+closeCode+": " + message);
 		if(token!=null) { 
 			Room.disconnect(token);
 			channels.remove(token);

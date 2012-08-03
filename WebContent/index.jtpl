@@ -142,13 +142,11 @@
 
   function getUserMedia() {
     try {
-      navigator.webkitGetUserMedia({audio:true, video:true}, onUserMediaSuccess,
-                                   onUserMediaError);
+      navigator.webkitGetUserMedia({audio:true, video:true}, onUserMediaSuccess, onUserMediaError);
       console.log("Requested access to local media with new syntax.");
     } catch (e) {
       try {
-        navigator.webkitGetUserMedia("video,audio", onUserMediaSuccess,
-                                     onUserMediaError);
+        navigator.webkitGetUserMedia("video,audio", onUserMediaSuccess, onUserMediaError);
         console.log("Requested access to local media with old syntax.");
       } catch (e) {
         alert("webkitGetUserMedia() failed. Is the MediaStream flag enabled in about:flags?");
@@ -253,6 +251,7 @@
   }
   function onChannelClosed() {
     console.log('Channel closed for token: {token}');
+    alert('Channel closed for user '+(initiator+1)+' with token {token}.');
 	channel = null;
   }
 
@@ -362,7 +361,7 @@
     channel.onclose = function () {}; // disable onclose handler first
     channel.close()
   };
-*/  
+*/ 
   setTimeout(initialize, 1);
 </script>
 <div id="container" ondblclick="enterFullScreen()"> 

@@ -9,7 +9,7 @@
   </servlet>
   <servlet-mapping>
   	<servlet-name>MessageServlet</servlet-name>
-  	<url-pattern>/message*</url-pattern>
+  	<url-pattern>/message</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -19,7 +19,6 @@
   <servlet-mapping>
   	<servlet-name>MainServlet</servlet-name>
   	<url-pattern>/</url-pattern>
-  	<url-pattern>/?r*</url-pattern>		
   </servlet-mapping>
   
   
