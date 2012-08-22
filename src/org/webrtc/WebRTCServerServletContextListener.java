@@ -8,8 +8,7 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 
 /**
  * Application Lifecycle Listener implementation for start/stop Embedding Jetty
- * Server configured to manage Chat WebSocket with {@link ChatWebSocketHandler}.
- * 
+ * Server configured to manage Signaling WebSocket with {@link WebRTCWebSocketHandler}.
  */
 public class WebRTCServerServletContextListener implements ServletContextListener {
 

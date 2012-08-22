@@ -36,6 +36,7 @@ public class MainPageServlet extends HttpServlet {
 		String room_key    = Helper.sanitize(params.get("r"));
 		String debug       = params.get("debug");
 	    String stun_server = params.get("ss");
+	    String audio_video = params.get("av");
 	    if(room_key==null || room_key.equals("")) {
 	    	room_key = Helper.generate_random(8);
 	        String redirect = "/" + PATH + "/?r=" + room_key;
