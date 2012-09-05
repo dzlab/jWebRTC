@@ -22,11 +22,21 @@
   </servlet-mapping>
   
   <!-- Serving static content with Tomcat's default Servlet -->
+  <servlet>
+    <servlet-name>DefaultServlet</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DefaultServlet</servlet-name>
+    <url-pattern>/images/*</url-pattern>
+    <url-pattern>/css/*</url-pattern>
+  </servlet-mapping>
+<!--  
   <servlet-mapping>
 	<servlet-name>default</servlet-name>
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
-  
+-->  
   <listener>
 	<listener-class>org.webrtc.WebRTCServerServletContextListener</listener-class>
   </listener>

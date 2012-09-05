@@ -21,10 +21,11 @@ public class MainPageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(MainPageServlet.class.getName());
 	
-	public static final String PATH = "jWebRTC";
+	//public static final String PATH = "jWebRTC";
 	
 	/** Renders the main page. When this page is shown, we create a new channel to push asynchronous updates to the client.*/
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {		
+		String PATH = req.getContextPath().replace("/", "");
 		String query = req.getQueryString();
 		if(query==null) {
 			String redirect = "/" + PATH + "/?r=" + Helper.generate_random(8);
